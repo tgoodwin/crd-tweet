@@ -18,10 +18,10 @@ async function main() {
     "CREATE TABLE IF NOT EXISTS users(id primary key, username, bio, email)"
   );
   await db.exec(
-    "CREATE TABLE IF NOT EXISTS tweets (id primary key, user_id, text, created_at"
+    "CREATE TABLE IF NOT EXISTS tweets (id primary key, user_id, text, created_at)"
   );
   await db.exec(
-    "CREATE TABLE IF NOT EXISTS likes (post_id, user_id, created_at)"
+    "CREATE TABLE IF NOT EXISTS likes (id primary key, post_id, user_id, created_at)"
   );
 
   // set them up as CRRs
@@ -32,13 +32,19 @@ async function main() {
   window.onbeforeunload = () => {
     db.close();
   }
-};
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+  const rx = await tblrx(db);
+  const ctx = {
+    db: db,
+    rx: rx,
+  };
+
+  ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+    <React.StrictMode>
+      <App ctx={ctx} />
+    </React.StrictMode>,
+  );
+};
 
 main();
 

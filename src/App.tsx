@@ -1,21 +1,37 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { Ctx } from './ctx';
+import { nanoid } from "nanoid";
+
 import './App.css'
 
-function App() {
+function App({ ctx }: { ctx: Ctx }) {
   const [count, setCount] = useState(0)
+  const [newText, setNewText] = useState("");
+
+  const submitTweet = () => {
+    ctx.db.exec("INSERT INTO tweets VALUES (?, ?, ?, ?)", [
+      nanoid(),
+      "USERNAME",
+      newText,
+      Date.now().toString()
+    ]);
+    setNewText("");
+  }
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <h1>CRDTWEET</h1>
+      <input
+        type="text"
+        className="tweet-input"
+        placeholder="whats the tweet?"
+        autoFocus
+        value={newText}
+        onChange={(e) => setNewText(e.target.value)}
+      />
+      <button className="submit-btn" onClick={submitTweet}>
+        Tweet
+      </button>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
