@@ -11,6 +11,8 @@ import wasmUrl from "@vlcn.io/wa-crsqlite/wa-sqlite-async.wasm?url";
 async function main() {
   const sqlite = await sqliteWasm(() => wasmUrl);
   const db = await sqlite.open("crd-tweet-db");
+
+  // useful for debugging via the console
   (window as any).db = db;
 
   // create schemas

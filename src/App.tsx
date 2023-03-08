@@ -1,11 +1,20 @@
 import { useState } from 'react'
+import { useQuery } from '@vlcn.io/react';
 import { Ctx } from './ctx';
 import { nanoid } from "nanoid";
 
 import './App.css'
 
+type Tweet = {
+  id: string;
+  userId: string;
+  text: string;
+  createdAt: string;
+}
+
+
 function App({ ctx }: { ctx: Ctx }) {
-  const [count, setCount] = useState(0)
+  // const [count, setCount] = useState(0)
   const [newText, setNewText] = useState("");
 
   const submitTweet = () => {
@@ -16,7 +25,19 @@ function App({ ctx }: { ctx: Ctx }) {
       Date.now().toString()
     ]);
     setNewText("");
+  };
+
+  const [tweets, setTweets] = useState("");
+  const query = async () => {
+    const r = await ctx.db.execA("SELECT * FROM tweets ORDER BY created_at DESC");
+    setTweets(`${r}`);
   }
+
+  // TODO filter for only people we follow
+  const timeline: readonly Tweet[] = useQuery<Tweet>(
+    ctx,
+    "SELECT * FROM tweets ORDER BY created_at DESC"
+  ).data;
 
   return (
     <div className="App">
@@ -33,12 +54,17 @@ function App({ ctx }: { ctx: Ctx }) {
         Tweet
       </button>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <button onClick={query}>
+          count is {tweets}
         </button>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR!
+          These are the tweets
         </p>
+        <ul className="timeline">
+          <div>
+            {`${timeline}`}
+          </div>
+        </ul>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more

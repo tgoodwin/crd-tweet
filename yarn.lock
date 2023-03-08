@@ -397,7 +397,15 @@
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
 
-"@vlcn.io/rx-tbl@^0.7.0":
+"@vlcn.io/react@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@vlcn.io/react/-/react-0.8.0.tgz#7819c575a7d8728c9e845d1b3c3ea91586d44461"
+  integrity sha512-rqbIfWjuNMfUCcjlrWPkvpZA9K/pj25xwwroRJC/Xg47pltjZkF6ZSMICsi5wJ8pp57ur/oVA6E8DfDPEZEHKQ==
+  dependencies:
+    "@vlcn.io/rx-tbl" "0.7.0"
+    "@vlcn.io/xplat-api" "0.7.0"
+
+"@vlcn.io/rx-tbl@0.7.0", "@vlcn.io/rx-tbl@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@vlcn.io/rx-tbl/-/rx-tbl-0.7.0.tgz#9b34727b004195ab87d0e3e1bc8a15c64f64322e"
   integrity sha512-7n3/KaOhVmTgkDrVJRAFRKO8xBV+ltzFhhaV0cUmrtBbeeboEqrd3h8EbCQAh9Qj1y/4iMXWP2K2Hs4BUtwBHA==
