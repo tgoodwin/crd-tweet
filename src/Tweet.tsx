@@ -5,7 +5,6 @@ import { nanoid } from "nanoid";
 
 import { SessionContext } from './App';
 
-
 export type Tweet = {
   id: string;
   user_id: string;
@@ -21,9 +20,13 @@ const TweetView = ({ tweet }: { tweet: Tweet; }) => {
   );
 };
 
+type TimelineView = "all" | "following";
+
 const Tweets = ({ ctx }:{ ctx: Ctx }) => {
   const userId = useContext(SessionContext);
   const [ newText, setNewText ] = useState("");
+
+  const [ view, setView ] = useState<TimelineView>("all");
 
   const submitTweet = (userId: string) => {
     ctx.db.exec("INSERT INTO tweets VALUES (?, ?, ?, ?)", [
@@ -36,9 +39,14 @@ const Tweets = ({ ctx }:{ ctx: Ctx }) => {
   };
 
   // TODO filter for only people we follow
-  const timeline: Tweet[] = useQuery<Tweet>(
+  const allTweets: Tweet[] = useQuery<Tweet>(
     ctx,
     "SELECT * FROM tweets ORDER BY created_at DESC",
+  ).data;
+
+  const followFeed: Tweet[] = useQuery<Tweet>(
+    ctx,
+    "SELECT t.* from tweets t JOIN follows f on t.user_id = f.user_id where f.follower_id = ? ORDER BY created_at DESC", [userId]
   ).data;
 
   return (
@@ -55,11 +63,17 @@ const Tweets = ({ ctx }:{ ctx: Ctx }) => {
         Tweet
       </button>
       <div className="card">
+        <button onClick={() => view === "all" ? setView("following") : setView("all")}>
+          View: {view}
+        </button>
         <p>
           These are the tweets
         </p>
         <ul>
-          {timeline.map(t => (<TweetView key={t.id} tweet={t} />))}
+          {
+            (view == "all" ? allTweets : followFeed)
+              .map(t => (<TweetView key={t.id} tweet={t} />))
+          }
         </ul>
       </div>
     </div>

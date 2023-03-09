@@ -26,6 +26,10 @@ async function main(): Promise<void> {
   await db.exec(
     "CREATE TABLE IF NOT EXISTS tweets (id primary key, user_id, text, created_at)"
   );
+
+  await db.exec(
+    "CREATE TABLE IF NOT EXISTS follows (id primary key, user_id, follower_id)"
+  );
   // await db.exec(
   //   "CREATE TABLE IF NOT EXISTS likes (id primary key, post_id, user_id, created_at)"
   // );
@@ -33,7 +37,7 @@ async function main(): Promise<void> {
   // set them up as CRRs
   await db.exec("SELECT crsql_as_crr('users')");
   await db.exec("SELECT crsql_as_crr('tweets')");
-  // await db.exec("SELECT crsql_as_crr('likes')");
+  await db.exec("SELECT crsql_as_crr('follows')");
 
   const r = await db.execA("SELECT crsql_siteid()");
   const siteid = uuidStringify(r[0][0])
