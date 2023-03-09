@@ -13,15 +13,16 @@ import { stringify as uuidStringify } from "uuid";
 
 async function main(): Promise<void> {
   const sqlite = await sqliteWasm(() => wasmUrl);
-  const db = await sqlite.open("crd-tweet-db");
+  // pass a filename to open to use persistent brower storage
+  const db = await sqlite.open();
 
   // useful for debugging via the console
   (window as any).db = db;
 
   // create schemas
-  // await db.exec(
-  //   "CREATE TABLE IF NOT EXISTS users(id primary key, username, bio, email)"
-  // );
+  await db.exec(
+    "CREATE TABLE IF NOT EXISTS users(id primary key, username, site_id)"
+  );
   await db.exec(
     "CREATE TABLE IF NOT EXISTS tweets (id primary key, user_id, text, created_at)"
   );
@@ -30,7 +31,7 @@ async function main(): Promise<void> {
   // );
 
   // set them up as CRRs
-  // await db.exec("SELECT crsql_as_crr('users')");
+  await db.exec("SELECT crsql_as_crr('users')");
   await db.exec("SELECT crsql_as_crr('tweets')");
   // await db.exec("SELECT crsql_as_crr('likes')");
 
