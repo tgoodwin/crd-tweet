@@ -7,14 +7,21 @@ import './App.css'
 
 type Tweet = {
   id: string;
-  userId: string;
+  user_id: string;
   text: string;
-  createdAt: string;
+  created_at: string;
+}
+
+const TweetView = ({ tweet }: { tweet: Tweet }) => {
+  return (
+    <div>
+      {tweet.user_id} : {tweet.text}
+    </div>
+  )
 }
 
 
 function App({ ctx }: { ctx: Ctx }) {
-  // const [count, setCount] = useState(0)
   const [newText, setNewText] = useState("");
 
   const submitTweet = () => {
@@ -27,16 +34,10 @@ function App({ ctx }: { ctx: Ctx }) {
     setNewText("");
   };
 
-  const [tweets, setTweets] = useState("");
-  const query = async () => {
-    const r = await ctx.db.execA("SELECT * FROM tweets ORDER BY created_at DESC");
-    setTweets(`${r}`);
-  }
-
   // TODO filter for only people we follow
-  const timeline: readonly Tweet[] = useQuery<Tweet>(
+  const timeline: Tweet[] = useQuery<Tweet>(
     ctx,
-    "SELECT * FROM tweets ORDER BY created_at DESC"
+    "SELECT * FROM tweets ORDER BY created_at DESC",
   ).data;
 
   return (
@@ -54,21 +55,13 @@ function App({ ctx }: { ctx: Ctx }) {
         Tweet
       </button>
       <div className="card">
-        <button onClick={query}>
-          count is {tweets}
-        </button>
         <p>
           These are the tweets
         </p>
-        <ul className="timeline">
-          <div>
-            {`${timeline}`}
-          </div>
+        <ul>
+          {timeline.map(t => (<TweetView key={t.id} tweet={t} />))}
         </ul>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
