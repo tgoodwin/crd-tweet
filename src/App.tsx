@@ -3,6 +3,7 @@ import { useQuery } from '@vlcn.io/react';
 import { Ctx } from './ctx';
 import { nanoid } from "nanoid";
 
+import Peers from './Peers'
 import './App.css'
 
 type Tweet = {
@@ -42,6 +43,10 @@ function App({ ctx }: { ctx: Ctx }) {
 
   return (
     <div className="App">
+    <div>
+      PeerID: {ctx.siteid}
+    </div>
+      <Peers ctx={ctx} />
       <h1>CRDTWEET</h1>
       <input
         type="text"
