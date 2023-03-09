@@ -1,36 +1,34 @@
 import { useState, createContext } from 'react';
-import { useQuery } from '@vlcn.io/react';
 import { Ctx } from './ctx';
 import { nanoid } from "nanoid";
 
 import Peers from './Peers';
+import Tweets from './Tweet';
 import './App.css';
 
 export const SessionContext = createContext<string>("");
 
-type Tweet = {
-  id: string;
-  user_id: string;
-  text: string;
-  created_at: string;
-};
-
-const TweetView = ({ tweet }: { tweet: Tweet; }) => {
+function Form({ btnText, onClick }: { btnText: string, onClick: (_: string) => void; }) {
+  const [ value, setValue ] = useState("");
+  const handler = () => {
+    onClick(value);
+    setValue("");
+  };
   return (
     <div>
-      {tweet.user_id} : {tweet.text}
+      <input
+        type="text"
+        placeholder="username"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <button onClick={handler}>{btnText}</button>
     </div>
   );
-};
-
+}
 
 function App({ ctx }: { ctx: Ctx; }) {
   const [ userId, setUserId ] = useState("");
-  const [ signupUsername, setSignupUsername ] = useState("");
-  const [ loginUsername, setLoginUsername ] = useState("");
-
-  const [ newText, setNewText ] = useState("");
-
   const createUser = async (username: string) => {
     await ctx.db.exec("INSERT INTO users VALUES (?, ?, ?)", [
       nanoid(),
@@ -54,73 +52,27 @@ function App({ ctx }: { ctx: Ctx; }) {
     setUserId(e[ 0 ][ 0 ]);
   };
 
-
-
-  const submitTweet = (userId: string) => {
-    ctx.db.exec("INSERT INTO tweets VALUES (?, ?, ?, ?)", [
-      nanoid(),
-      userId,
-      newText,
-      Date.now().toString()
-    ]);
-    setNewText("");
-  };
-
-  // TODO filter for only people we follow
-  const timeline: Tweet[] = useQuery<Tweet>(
-    ctx,
-    "SELECT * FROM tweets ORDER BY created_at DESC",
-  ).data;
-
   return (
     <div className="App">
-      <div>
-        PeerID: {ctx.siteid}
-      </div>
-      <Peers ctx={ctx} />
-      <div className="session">
-        <h2>sign up:</h2>
-        <input
-          type="text"
-          placeholder="username"
-          value={signupUsername}
-          onChange={(e) => setSignupUsername(e.target.value)}
-        />
-        <button onClick={() => createUser(signupUsername)} >Sign up</button>
-        <h2>or log in:</h2>
-        <input
-          type="text"
-          placeholder="username"
-          value={loginUsername}
-          onChange={(e) => setLoginUsername(e.target.value)}
-        />
-        <button onClick={() => logIn(loginUsername)} >Log in</button>
-      </div>
-      <h1>CRDTWEET</h1>
-      <p>{userId == ""
-        ? 'need to log in to tweet'
-        : `current user: ${userId}`
-      }
-      </p>
-      <input
-        type="text"
-        className="tweet-input"
-        placeholder="whats the tweet?"
-        autoFocus
-        value={newText}
-        onChange={(e) => setNewText(e.target.value)}
-      />
-      <button className="submit-btn" disabled={userId == ""} onClick={() => submitTweet(userId)}>
-        Tweet
-      </button>
-      <div className="card">
-        <p>
-          These are the tweets
+      <SessionContext.Provider value={userId}>
+        <h1>CRDTWEET</h1>
+        <div>
+          PeerID: {ctx.siteid}
+        </div>
+        <Peers ctx={ctx} />
+        <div className="session">
+          <h2>sign up:</h2>
+          <Form onClick={createUser} btnText="Sign up" />
+          <h2>Or log in</h2>
+          <Form onClick={logIn} btnText="Log in" />
+        </div>
+        <p>{userId == ""
+          ? 'need to log in to tweet'
+          : `current user: ${userId}`
+        }
         </p>
-        <ul>
-          {timeline.map(t => (<TweetView key={t.id} tweet={t} />))}
-        </ul>
-      </div>
+        {userId !== "" && <Tweets ctx={ctx} />}
+      </SessionContext.Provider>
     </div>
   );
 }
