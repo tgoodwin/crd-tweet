@@ -2,7 +2,12 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
+  /* text-align: center; */
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
@@ -16,6 +21,33 @@
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.tweet-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tweet {
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid black;
+}
+
+.peer-container {
+  /* display: flex; */
+}
+.peers {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tweet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 @keyframes logo-spin {

@@ -29,6 +29,7 @@ function Form({ btnText, onClick }: { btnText: string, onClick: (_: string) => v
 
 function App({ ctx }: { ctx: Ctx; }) {
   const [ userId, setUserId ] = useState("");
+  // not attempting to enforce uniqueness on username
   const createUser = async (username: string) => {
     await ctx.db.exec("INSERT INTO users VALUES (?, ?, ?)", [
       nanoid(),
@@ -46,32 +47,38 @@ function App({ ctx }: { ctx: Ctx; }) {
     if (e.length == 0) {
       alert(`username ${username} not found`);
     }
-    await ctx.db.exec("UPDATE USER SET site_id = ? WHERE username = ?",
+    await ctx.db.exec("UPDATE users SET site_id = ? WHERE username = ?",
       [ ctx.siteid, username ]);
 
     setUserId(e[ 0 ][ 0 ]);
   };
 
+  const preAuth = (
+    <div className="session">
+      <h2>sign up:</h2>
+      <Form onClick={createUser} btnText="Sign up" />
+      <h2>Or log in</h2>
+      <Form onClick={logIn} btnText="Log in" />
+    </div>
+  );
+
+  const postAuth = (
+    <div>
+      <div className="peers">
+        <p>current user: {userId}</p>
+        <button onClick={() => setUserId("")}>Log out</button>
+      </div>
+      <Peers ctx={ctx} />
+      <Tweets ctx={ctx} />
+    </div>
+  );
+
   return (
     <div className="App">
       <SessionContext.Provider value={userId}>
         <h1>CRDTWEET</h1>
-        <div>
-          PeerID: {ctx.siteid}
-        </div>
-        <Peers ctx={ctx} />
-        <div className="session">
-          <h2>sign up:</h2>
-          <Form onClick={createUser} btnText="Sign up" />
-          <h2>Or log in</h2>
-          <Form onClick={logIn} btnText="Log in" />
-        </div>
-        <p>{userId == ""
-          ? 'need to log in to tweet'
-          : `current user: ${userId}`
-        }
-        </p>
-        {userId !== "" && <Tweets ctx={ctx} />}
+        Peer ID: {ctx.siteid}
+        {userId === "" ? preAuth : postAuth}
       </SessionContext.Provider>
     </div>
   );
