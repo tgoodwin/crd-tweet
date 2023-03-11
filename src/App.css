@@ -1,7 +1,7 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   /* text-align: center; */
 }
 
@@ -23,20 +23,24 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.tweet-text {
+  max-width: 400px;
+}
+
 .tweet-container {
-  display: flex;
-  flex-direction: column;
+  border: 1px solid #121212;
+  border-radius: 8px;
+  padding: 1em;
+  margin-top: 1em;
 }
 
 .tweet {
   padding: 0.5em;
   margin-bottom: 0.5em;
   border: 1px solid black;
+  border-radius: 8px;
 }
 
-.peer-container {
-  /* display: flex; */
-}
 .peers {
   margin-top: 1em;
   margin-bottom: 1em;

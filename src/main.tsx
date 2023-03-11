@@ -21,21 +21,14 @@ async function main(dbName: string | undefined): Promise<void> {
   (window as any).db = db;
 
   // create schemas
-  await db.exec(
-    "CREATE TABLE IF NOT EXISTS users(id primary key, username, site_id)"
-  );
-  await db.exec(
-    "CREATE TABLE IF NOT EXISTS tweets (id primary key, user_id, text, created_at)"
-  );
-
-  await db.exec(
+  await db.execMany([
+    "CREATE TABLE IF NOT EXISTS users(id primary key, username, site_id);",
+    "CREATE TABLE IF NOT EXISTS tweets (id primary key, user_id, text, created_at);",
     // use an is_deleted column to support un-deletions
     // since the table is implemented as a remove-wins set
-    "CREATE TABLE IF NOT EXISTS follows (id primary key, user_id, follower_id, is_deleted)"
-  );
-  // await db.exec(
-  //   "CREATE TABLE IF NOT EXISTS likes (id primary key, post_id, user_id, created_at)"
-  // );
+    "CREATE TABLE IF NOT EXISTS follows (id primary key, user_id, follower_id, is_deleted);",
+    "CREATE TABLE IF NOT EXISTS likes (id primary key, user_id, tweet_id, is_deleted);"
+  ]);
 
   // set them up as CRRs
   await db.exec("SELECT crsql_as_crr('users')");

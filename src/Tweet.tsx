@@ -37,12 +37,20 @@ const Tweets = ({ ctx }: { ctx: Ctx; }) => {
   };
 
   const createFollow = (userId: string, followerId: string) => {
-    ctx.db.exec("INSERT INTO follows VALUES (?, ?, ?, 0)", [ nanoid(), userId, followerId ]);
+    ctx.db.exec("INSERT OR REPLACE INTO follows VALUES (?, ?, ?, 0)", [ nanoid(), userId, followerId ]);
   };
 
   const removeFollow = (userId: string, followerId: string) => {
     ctx.db.exec("UPDATE follows SET is_deleted=1 WHERE user_id = ? and follower_id = ?", [ userId, followerId ]);
   };
+
+  const likeTweet = (userId: string, tweetId: string) => {
+    ctx.db.exec("INSERT OR REPLACE INTO likes VALUES (?, ?, ?, ?)", [nanoid(), userId, tweetId, 0]);
+  }
+
+  const unlikeTweet = (userId: string, tweetId: string) => {
+    ctx.db.exec("UPDATE likes SET is_deleted=1 WHERE user_id = ? and tweet_id = ?", [userId, tweetId]);
+  }
 
   const allTweets: Tweet[] = useQuery<Tweet>(
     ctx,
@@ -71,6 +79,12 @@ const Tweets = ({ ctx }: { ctx: Ctx; }) => {
   const TweetView = ({ tweet }: { tweet: Tweet; }) => {
     const isFollowing = following.includes(tweet.user_id);
     const followCb = isFollowing ? removeFollow : createFollow;
+    const likingUsers: string[] = useQuery<{ user_id: string }>(
+      ctx, "SELECT user_id FROM likes WHERE tweet_id = ? and is_deleted=0", [tweet.id]
+    ).data.map(e => e.user_id);
+    const liked = likingUsers.includes(userId);
+    const likeCb = liked ? unlikeTweet : likeTweet;
+
     const f = (
       <a onClick={() => followCb(tweet.user_id, userId)}>({isFollowing ? 'following' : 'follow'})</a>
     );
@@ -88,35 +102,42 @@ const Tweets = ({ ctx }: { ctx: Ctx; }) => {
           <span>{dateFmt}</span>
         </div>
         <div className="tweet-header">
-          <h4>{tweet.text}</h4>
+          <p className="tweet-text">{tweet.text}</p>
           {userId === tweet.user_id && <a onClick={() => deleteTweet(tweet.id)}>[x]</a>}
+        </div>
+        <div className="tweet-header">
+          Likes: {likingUsers.length}
+          <a onClick={() => likeCb(userId, tweet.id)}>{liked ? 'unlike':'like'}</a>
         </div>
       </div>
     );
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        className="tweet-input"
-        placeholder="whats the tweet?"
-        autoFocus
-        value={newText}
-        onChange={(e) => setNewText(e.target.value)}
-      />
-      <button
-        className="submit-btn"
-        onClick={() => submitTweet(userId)}>
-        Tweet
-      </button>
-      <p className="tweet-header">
+    <div className="tweet-container">
+      <div className="tweet-header">
         These are the tweets
         <button onClick={() => view === "all" ? setView("following") : setView("all")}>
           Viewing: {view}
         </button>
+      </div>
+      <p className="tweet-header">
+        <input
+          size={30}
+          type="text"
+          className="tweet-input"
+          placeholder="Whats your tweet?"
+          autoFocus
+          value={newText}
+          onChange={(e) => setNewText(e.target.value)}
+        />
+        <button
+          className="submit-btn"
+          onClick={() => submitTweet(userId)}>
+          Tweet it
+        </button>
       </p>
-      <div className="tweet-container">
+      <div>
         {
           (view == "all" ? allTweets : followFeed)
             .map(t => (<TweetView key={t.id} tweet={t} />))

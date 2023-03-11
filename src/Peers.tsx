@@ -35,24 +35,28 @@ export default function Peers({ ctx }: { ctx: Ctx; }) {
     };
   }, [ ctx.rtc ]);
   return (
-    <div className="peer-container">
-      Peer info
-      <ul>
+    <div className="tweet-container">
+      <p>
+        Local Peer ID: {ctx.siteid}
+      </p>
+      <div className="tweet-header">
         <input
+          size={30}
           type="text"
-          placeholder="Peer ID"
+          placeholder="Remote Peer ID"
           onChange={(e) => setPeerId(e.target.value)}
           value={peerId}
         ></input>
         <button
           href="#"
+          disabled={peerId.length == 0}
           onClick={() => {
             ctx.rtc.connectTo(peerId);
           }}
         >
           Connect
         </button>
-      </ul>
+      </div>
       <div className="peers">
         <ul className="pending">
           Pending
