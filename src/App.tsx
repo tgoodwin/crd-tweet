@@ -8,6 +8,11 @@ import './App.css';
 
 export const SessionContext = createContext<string>("");
 
+function kill(dbname: string) {
+  window.indexedDB.deleteDatabase(dbname);
+};
+
+
 function Form({ btnText, onClick }: { btnText: string, onClick: (_: string) => void; }) {
   const [ value, setValue ] = useState("");
   const handler = () => {

@@ -48,7 +48,7 @@ export default function Peers({ ctx }: { ctx: Ctx; }) {
           value={peerId}
         ></input>
         <button
-          href="#"
+          // href="#"
           disabled={peerId.length == 0}
           onClick={() => {
             ctx.rtc.connectTo(peerId);

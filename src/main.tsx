@@ -10,7 +10,11 @@ import { wdbRtc } from "@vlcn.io/sync-p2p";
 import { stringify as uuidStringify } from "uuid";
 
 const DB_IN_MEMORY = undefined;
-const DB_PERSISTENT = "crd-tweet-1"
+const DB_PERSISTENT = "crd-tweet-1";
+
+function kill(dbname: string) {
+  window.indexedDB.deleteDatabase(dbname);
+}
 
 async function main(dbName: string | undefined): Promise<void> {
   const sqlite = await sqliteWasm(() => wasmUrl);
