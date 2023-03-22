@@ -26,7 +26,7 @@ const Tweets = ({ ctx }: { ctx: Ctx; }) => {
     ctx.db.exec("INSERT INTO tweets VALUES (?, ?, ?, ?)", [
       nanoid(),
       userId,
-      newText,
+      newText.trim(),
       date.toISOString()
     ]);
     setNewText("");
@@ -89,7 +89,7 @@ const Tweets = ({ ctx }: { ctx: Ctx; }) => {
       <a onClick={() => followCb(tweet.user_id, userId)}>({isFollowing ? 'following' : 'follow'})</a>
     );
     const dateFmt = new Date(tweet.created_at).toLocaleDateString('en', {
-      year: 'numeric',
+      // year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: 'numeric',
@@ -103,7 +103,9 @@ const Tweets = ({ ctx }: { ctx: Ctx; }) => {
         </div>
         <div className="tweet-header">
           <p className="tweet-text">{tweet.text}</p>
-          {userId === tweet.user_id && <a onClick={() => deleteTweet(tweet.id)}>[x]</a>}
+          {userId === tweet.user_id &&
+            <a onClick={() => deleteTweet(tweet.id)}>[x]</a>
+          }
         </div>
         <div className="tweet-header">
           Likes: {likingUsers.length}

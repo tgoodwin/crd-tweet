@@ -23,10 +23,6 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-.tweet-text {
-  max-width: 400px;
-}
-
 .tweet-container {
   border: 1px solid #121212;
   border-radius: 8px;
@@ -39,6 +35,11 @@
   margin-bottom: 0.5em;
   border: 1px solid black;
   border-radius: 8px;
+}
+
+.tweet-text {
+  font-size: 1.4em;
+  max-width: 400px;
 }
 
 .peers {
@@ -70,7 +71,7 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 1em;
 }
 
 .read-the-docs {

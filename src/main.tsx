@@ -38,6 +38,7 @@ async function main(dbName: string | undefined): Promise<void> {
   await db.exec("SELECT crsql_as_crr('users')");
   await db.exec("SELECT crsql_as_crr('tweets')");
   await db.exec("SELECT crsql_as_crr('follows')");
+  await db.exec("SELECT crsql_as_crr('likes')");
 
   const r = await db.execA("SELECT crsql_siteid()");
   const siteid = uuidStringify(r[0][0]);

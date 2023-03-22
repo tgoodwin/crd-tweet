@@ -39,6 +39,9 @@ export default function Peers({ ctx }: { ctx: Ctx; }) {
       <p>
         Local Peer ID: {ctx.siteid}
       </p>
+      <p onClick={() => navigator.clipboard.writeText(ctx.siteid)}>
+        [copy]
+      </p>
       <div className="tweet-header">
         <input
           size={30}
@@ -48,10 +51,10 @@ export default function Peers({ ctx }: { ctx: Ctx; }) {
           value={peerId}
         ></input>
         <button
-          // href="#"
           disabled={peerId.length == 0}
           onClick={() => {
             ctx.rtc.connectTo(peerId);
+            setPeerId("");
           }}
         >
           Connect
